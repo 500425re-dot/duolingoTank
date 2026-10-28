@@ -1,8 +1,8 @@
 #include <AFMotor.h>
-#define tazerPin 10 //precisa estar ON para desligar e OFF para ligar
+#define tazerPin 10 //Needs to be ON to power down en OFF to power up
 unsigned long time;
 unsigned long antTime;
-bool tazerEstado = 0;
+bool tazerState = 0;
 char data = '0';
 
 //inicializando motores
@@ -26,9 +26,9 @@ void loop() {
 if( Serial.available() > 0){ 
 
   data = Serial.read();
-  if(data == '1' && tazerEstado == 0){ 
+  if(data == '1' && tazerState == 0){ 
    digitalWrite(tazerPin, LOW);
-   tazerEstado = 1;
+   tazerState = 1;
    antTime = time;
   } else if(data == '0'){ 
     digitalWrite(tazerPin, HIGH);
@@ -36,30 +36,30 @@ if( Serial.available() > 0){
     motor2.run(RELEASE);
   }
 
-  //controlando os motores- os sentidos de direçao
-  if(data == '2'){ //para frente faz o os dois motorer ligarme ligarme para fente e ja que um dosm motores esta invetd as roda duas sao mieo invertido ao que fazem o carro ir para frenet oque ';e oque importqa
+  //motor control plus move direction
+  if(data == '2'){ //2 dc high torque motors:
     motor.run(FORWARD);
     motor2.run(FORWARD);
-  }else if(data == '3'){  //para esquerda 
+  }else if(data == '3'){  //left
     motor.run(BACKWARD);
     motor2.run(FORWARD);
 
-  }else if(data == '4'){ // para direita
+  }else if(data == '4'){ // right
     motor.run(FORWARD);
     motor2.run(BACKWARD);
 
-  }else if(data == '5'){ //para traz
+  }else if(data == '5'){ //backwards
     motor.run(BACKWARD);
     motor2.run(BACKWARD);
   }
 
  }
 
-//delay do tazer
+//tazer delay
 time = millis();
-if(tazerEstado == 1 && time - antTime >= 5000){
-  tazerEstado = 0;
+if(tazerState == 1 && time - antTime >= 5000){
+  tazerState = 0;
   antTime = time;
- }else if(tazerEstado == 1 && time - antTime >= 1000)
+ }else if(tazerState == 1 && time - antTime >= 1000)
    digitalWrite(tazerPin, HIGH);
 }
